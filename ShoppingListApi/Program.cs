@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using ShoppingListApi.Models;
+
 namespace ShoppingListApi
 {
     public class Program
@@ -6,32 +9,41 @@ namespace ShoppingListApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Dodajemy us³ugi CORS
+            // Add DbContext for SQLite
+            builder.Services.AddDbContext<ShoppingListContext>(options =>
+                options.UseSqlite("Data Source=ShoppingList.db")); // Add the correct connection string for SQLite
+            
+            builder.Services.AddControllers()
+                .AddNewtonsoftJson(options =>
+                options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver());
+
+            builder.Services.AddSwaggerGenNewtonsoftSupport();
+            // Add services to the container.
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", policy =>
                 {
-                    policy.AllowAnyOrigin()   // Zezwala na po³¹czenia z dowolnego Ÿród³a
-                          .AllowAnyMethod()   // Zezwala na dowolne metody HTTP (GET, POST, PUT, DELETE, itd.)
-                          .AllowAnyHeader();  // Zezwala na dowolne nag³ówki
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
                 });
             });
 
-            // Dodajemy inne us³ugi
+            // Add other services
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
 
-            // Konfiguracja œcie¿ki API i CORS
+            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            // Dodajemy u¿ycie CORS przed autoryzacj¹ i innymi middleware
+            // Use CORS
             app.UseCors("AllowAll");
 
             app.UseHttpsRedirection();

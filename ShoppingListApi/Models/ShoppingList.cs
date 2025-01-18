@@ -6,7 +6,7 @@ namespace ShoppingListApi.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public List<string> Products { get; set; } = new List<string>();
+        public List<ListItem> Items { get; set; } = new List<ListItem>();
     }
 }
 
