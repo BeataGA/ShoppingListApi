@@ -6,32 +6,28 @@ namespace ShoppingListApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Dodajemy us³ugi CORS
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", policy =>
                 {
-                    policy.AllowAnyOrigin()   // Zezwala na po³¹czenia z dowolnego Ÿród³a
-                          .AllowAnyMethod()   // Zezwala na dowolne metody HTTP (GET, POST, PUT, DELETE, itd.)
-                          .AllowAnyHeader();  // Zezwala na dowolne nag³ówki
+                    policy.AllowAnyOrigin()   
+                          .AllowAnyMethod()   
+                          .AllowAnyHeader();  
                 });
             });
 
-            // Dodajemy inne us³ugi
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
 
-            // Konfiguracja œcie¿ki API i CORS
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            // Dodajemy u¿ycie CORS przed autoryzacj¹ i innymi middleware
             app.UseCors("AllowAll");
 
             app.UseHttpsRedirection();
